@@ -1,0 +1,46 @@
+# Eclipse settings
+.classpath
+.project
+.settings/
+
+# Maven target folder
+target/
+
+# IntelliJ IDEA 
+.idea/
+*.iml
+*.iws
+
+# VS Code workspace files
+.vscode/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+
+# Java specific
+*.class
+*.jar
+*.war
+*.ear
+
+# Test reports 
+/surefire-reports/
+/test-output/
+
+
+# Build tools cache#
+/.mvn/
+/mvnw
+/mvnw.cmd
+
+# Git folder exclusions
+.git/
