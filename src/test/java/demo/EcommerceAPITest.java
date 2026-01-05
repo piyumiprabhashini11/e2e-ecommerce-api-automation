@@ -69,9 +69,9 @@ public class EcommerceAPITest {
 			
 			RequestSpecification request= new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").addHeader("Authorization", token).setContentType(ContentType.JSON) .build();	
 			RequestSpecification reqCreateOrder=given().log().all().spec(request).body(orderDetails);
-			
-		    String responseCreateOrder=reqCreateOrder.when().post("/api/ecom/order/create-order").then().log().all().extract().response().asString();
-		    System.out.println("The response of Create Oreder is "+responseCreateOrder);
+	
+		 String responseCreateOrder=reqCreateOrder.when().post("/api/ecom/order/create-order").then().log().all().extract().response().asString();
+		 System.out.println("The response of Create Oreder is "+responseCreateOrder);
 			
 		}
 }
