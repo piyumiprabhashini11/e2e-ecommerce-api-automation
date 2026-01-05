@@ -6,17 +6,21 @@ import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
+import pojo.CreateOrderRequest;
 import pojo.LoginRequest;
 import pojo.LoginResponse;
+import pojo.OrdersPojo;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.*;
-
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EcommerceAPITest {
 
 		public static void main(String[] args) {
 			
+			//Login
 			RequestSpecification req= new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com/").setContentType(ContentType.JSON).build();
 			ResponseSpecification res=new ResponseSpecBuilder().expectStatusCode(201).build();
 			
@@ -30,7 +34,7 @@ public class EcommerceAPITest {
 			System.out.println(loginResponse.getToken());
 			System.out.println(loginResponse.getMessage());
 			
-			//Add Product
+			//Create Product
 			String token=loginResponse.getToken();
 			String UserId=loginResponse.getUserId();
 			RequestSpecification req2=new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com/").addHeader("authorization", token).build();
@@ -40,15 +44,34 @@ public class EcommerceAPITest {
 					.multiPart("productImage",new File("E:\\Piyumi\\Automation\\Rest Assured API Automation\\src\\test\\resources\\frock.png"));
 			
 			//Method A - Get the response into a String variable and create the JsonPath object (Json object) by inserting that String variable
-			String responseCreateProduct=reqCreateProduct.when().post("/api/ecom/product/add-product").then().extract().response().asString(); 
-			JsonPath js=new JsonPath(responseCreateProduct);
-			System.out.println(js.getString("productId"));
-			System.out.println(js.getString("message"));
+//			String responseCreateProduct=reqCreateProduct.when().post("/api/ecom/product/add-product").then().extract().response().asString(); 
+//			JsonPath js=new JsonPath(responseCreateProduct);
+//			System.out.println(js.getString("productId"));
+//			System.out.println(js.getString("message"));
 			
 			//Method B Get the response as a JsonPath object (Json object) directly
-			JsonPath resCreateProduct=reqCreateProduct.when().post("/api/ecom/product/add-product").then().extract().response().jsonPath();
+			JsonPath resCreateProduct=reqCreateProduct.when().post("/api/ecom/product/add-product").then().log().all().extract().response().jsonPath();
 			System.out.println(resCreateProduct.getString("productId"));
 			System.out.println(resCreateProduct.getString("message"));	
+			
+			//Create Order
+			String productOrderdId=resCreateProduct.getString("productId");
+			
+			OrdersPojo orderValues=new OrdersPojo();
+			orderValues.setCountry("Japan");
+			orderValues.setProductOrderedId(productOrderdId);
+			
+			List<OrdersPojo> ordersList= new ArrayList<>();
+			ordersList.add(orderValues);
+			
+			CreateOrderRequest orderDetails= new CreateOrderRequest();
+			orderDetails.setOrders(ordersList);
+			
+			RequestSpecification request= new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").addHeader("Authorization", token).setContentType(ContentType.JSON) .build();	
+			RequestSpecification reqCreateOrder=given().log().all().spec(request).body(orderDetails);
+			
+		    String responseCreateOrder=reqCreateOrder.when().post("/api/ecom/order/create-order").then().log().all().extract().response().asString();
+		    System.out.println("The response of Create Oreder is "+responseCreateOrder);
 			
 		}
 }
