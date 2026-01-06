@@ -21,24 +21,23 @@ public class EcommerceAPITest {
 		public static void main(String[] args) {
 			
 			//Login
-			RequestSpecification req= new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com/").setContentType(ContentType.JSON).build();
-			ResponseSpecification res=new ResponseSpecBuilder().expectStatusCode(201).build();
-			
 			LoginRequest loginRequest = new LoginRequest();
 			loginRequest.setUserEmail("EMAIL");
 			loginRequest.setUserPassword("PASSWORD");
 			
+			RequestSpecification req= new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com/").setContentType(ContentType.JSON).build();
 			RequestSpecification reqLogin=given().spec(req).body(loginRequest);
 			LoginResponse loginResponse= reqLogin.when().post("/api/ecom/auth/login").then().extract().response().as(LoginResponse.class);
 			System.out.println(loginResponse.getUserId());
 			System.out.println(loginResponse.getToken());
 			System.out.println(loginResponse.getMessage());
+			ResponseSpecification res=new ResponseSpecBuilder().expectStatusCode(201).build();
 			
 			//Create Product
 			String token=loginResponse.getToken();
 			String UserId=loginResponse.getUserId();
-			RequestSpecification req2=new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com/").addHeader("authorization", token).build();
 			
+			RequestSpecification req2=new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com/").addHeader("authorization", token).build();
 			RequestSpecification reqCreateProduct=given().spec(req2).param("productName", "Lewis")	.param("productAddedBy",UserId).param("productCategory","fashion")
 					.param("productSubCategory","shirt").param("productPrice",11500).param("productDescription","Lewis Originals").param("productFor","women")
 					.multiPart("productImage",new File("E:\\Piyumi\\Automation\\Rest Assured API Automation\\src\\test\\resources\\frock.png"));
@@ -69,9 +68,21 @@ public class EcommerceAPITest {
 			
 			RequestSpecification request= new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").addHeader("Authorization", token).setContentType(ContentType.JSON) .build();	
 			RequestSpecification reqCreateOrder=given().log().all().spec(request).body(orderDetails);
-	
-		 String responseCreateOrder=reqCreateOrder.when().post("/api/ecom/order/create-order").then().log().all().extract().response().asString();
-		 System.out.println("The response of Create Oreder is "+responseCreateOrder);
-			
+		    String responseCreateOrder=reqCreateOrder.when().post("/api/ecom/order/create-order").then().log().all().extract().response().asString();
+		    System.out.println("The response of Create Oreder is "+responseCreateOrder);
+					
+		    JsonPath js3=new JsonPath(responseCreateOrder);
+		    List<String> orderIds=js3.getList("orders");
+		    String productOrderId=orderIds.get(0);
+		    		
+		    //Delete Product	
+		    RequestSpecification req3=new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").addHeader("authorization",token).build();
+		    RequestSpecification reqDeleteProduct= given().spec(req3).pathParam("productId", productOrderdId);
+		    String responseDeleteProduct=reqDeleteProduct.when().delete("/api/ecom/product/delete-product/{productId}").then().log().all().extract().response().asString();
+		   
+		   //Delete Order
+		   RequestSpecification req4=new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").addHeader("authorization",token).build();
+		   RequestSpecification reqDeleteOrder= given().spec(req4).pathParam("orderId", productOrderId);
+		   String responseDeleteOrder=reqDeleteOrder.when().delete("/api/ecom/order/delete-order/{orderId}").then().log().all().extract().response().asString();
 		}
 }
