@@ -43,10 +43,10 @@ public class EcommerceAPITest {
 					.multiPart("productImage",new File("E:\\Piyumi\\Automation\\Rest Assured API Automation\\src\\test\\resources\\frock.png"));
 			
 			//Method A - Get the response into a String variable and create the JsonPath object (Json object) by inserting that String variable
-			String responseCreateProduct=reqCreateProduct.when().post("/api/ecom/product/add-product").then().extract().response().asString(); 
-			JsonPath js=new JsonPath(responseCreateProduct);
-			System.out.println(js.getString("productId"));
-			System.out.println(js.getString("message"));
+//			String responseCreateProduct=reqCreateProduct.when().post("/api/ecom/product/add-product").then().extract().response().asString(); 
+//			JsonPath js=new JsonPath(responseCreateProduct);
+//			System.out.println(js.getString("productId"));
+//			System.out.println(js.getString("message"));
 			
 			//Method B Get the response as a JsonPath object (Json object) directly
 			JsonPath resCreateProduct=reqCreateProduct.when().post("/api/ecom/product/add-product").then().log().all().extract().response().jsonPath();
