@@ -26,7 +26,7 @@ public class EcommerceAPITest {
 			loginRequest.setUserPassword("PASSWORD");
 			
 			RequestSpecification req= new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com/").setContentType(ContentType.JSON).build();
-			RequestSpecification reqLogin=given().spec(req).body(loginRequest);
+			RequestSpecification reqLogin=given().relaxedHTTPSValidation().spec(req).body(loginRequest); //relaxedHTTPSValidation() method is used to trust all hosts regardless if the SSL certificate is invalid. 
 			LoginResponse loginResponse= reqLogin.when().post("/api/ecom/auth/login").then().extract().response().as(LoginResponse.class);
 			System.out.println(loginResponse.getUserId());
 			System.out.println(loginResponse.getToken());
